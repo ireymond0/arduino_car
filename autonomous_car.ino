@@ -89,12 +89,12 @@ void checkForObjects(int pos){
   while( (objDist < 70) && (objDist > 40)){
     objDist = getDistance();
     if( pos < 70 ){
-      motor1.setSpeed(currSpeed*2);
-      motor4.setSpeed(currSpeed*2);
+      motor2.setSpeed(currSpeed/2);
+      motor3.setSpeed(currSpeed/2);
     }
     else{
-      motor2.setSpeed(currSpeed*2);
-      motor3.setSpeed(currSpeed*2);
+      motor1.setSpeed(currSpeed/2);
+      motor4.setSpeed(currSpeed/2);
     }
   }
   while(objDist <= 40){
@@ -117,9 +117,9 @@ void checkForObjects(int pos){
  ************************************************************************/
 void hardLeft(){
     motor1.run(FORWARD);
-    motor1.setSpeed(currSpeed/2);
+    motor1.setSpeed(currSpeed);
     motor4.run(FORWARD);
-    motor4.setSpeed(currSpeed/2);
+    motor4.setSpeed(currSpeed);
     motor2.run(BACKWARD);
 //    motor2.setSpeed(currSpeed*2);
     motor3.run(BACKWARD);
@@ -136,9 +136,9 @@ void hardRight(){
     motor4.run(BACKWARD);
 //    motor4.setSpeed(currSpeed*2);
     motor2.run(FORWARD);
-    motor2.setSpeed(currSpeed/2);
+    motor2.setSpeed(currSpeed);
     motor3.run(FORWARD);
-    motor3.setSpeed(currSpeed/2);
+    motor3.setSpeed(currSpeed);
 }
 
 /************************************************************************
@@ -165,7 +165,7 @@ void loop() {
    */
   servo2.write(80);
   delay(100);
-  for( pos=80; pos <= 130; pos++){
+  for( pos=80; pos <= 160; pos++){
     servo2.write(pos);
     delay(10);
     motor1.run(FORWARD);
