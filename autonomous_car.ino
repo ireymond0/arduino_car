@@ -160,7 +160,7 @@ void loop() {
 
   setMotorSpeed(currSpeed);
   /*
-   * - Start with the servo pointing straight ahead (pos = 70).
+   * - Start with the servo pointing straight ahead (pos = 80 in this case).
    * - Start to sweep servo to the left and check with every step if something is in the way.
    */
   servo2.write(80);
