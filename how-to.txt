@@ -1,0 +1,8 @@
+Parts needed:
+- Kit: https://www.amazon.com/gp/product/B07DNXBFQN/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1
+- Arduino Mega: https://www.microcenter.com/product/486545/arduino-mega-2560
+- Motor Controller: https://www.microcenter.com/product/416934/osepp-motor---servo-shield
+- Ultrasonic Sensor: https://www.microcenter.com/product/453103/ultrasonic-sensor-module
+- Servo Motor: https://www.microcenter.com/product/454408/micro-servo
+
+TO BE CONTINUED...
