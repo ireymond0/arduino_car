@@ -9,11 +9,13 @@ Servo servo2;
 
 const int trigPin = 22;
 const int echoPin = 23;
+const int trigPin2 = 24;
+const int echoPin2 = 25;
 int pos = 40;
 
 // defines variables
-long duration;
-int distance;
+long duration, duration2;
+int distance, distance2;
 int currSpeed;
 
 /************************************************************************
@@ -30,7 +32,31 @@ struct obstacle{
 obstacle obs;
 
 /************************************************************************
- * Use ultrasonic sensor to get the distance to the nearest object.
+ * Use ultrasonic sensor to get the distance to the nearest object in
+ *    the front.
+ ************************************************************************/
+int getFrontObject(){
+  //Clears the trigPin
+  digitalWrite(trigPin2,LOW);
+  delayMicroseconds(2);
+
+  //Set the trigPin on HIGH state for 10 microseconds
+  digitalWrite(trigPin2,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin2,LOW);
+
+  //Reads the echoPin, returns the sound wave travel time in microseconds
+  duration2 = pulseIn(echoPin2,HIGH);
+
+  //Calculating the distance in cm
+  distance2 = duration2 / 29 / 2;
+
+  return distance;
+}
+
+/************************************************************************
+ * Use ultrasonic sensor to get the distance to the nearest object in
+ *    180 degrees in front
  ************************************************************************/
 int getDistance(){
   //Clears the trigPin
@@ -45,8 +71,8 @@ int getDistance(){
   //Reads the echoPin, returns the sound wave travel time in microseconds
   duration = pulseIn(echoPin,HIGH);
 
-  //Calculating the distance
-  distance = duration*0.034/2;
+  //Calculating the distance in cm
+  distance = duration / 29 / 2;
 
   return distance;
 }
@@ -156,7 +182,7 @@ void setup() {
  * Main Routine
  ************************************************************************/
 void loop() {
-  currSpeed = 250;
+  currSpeed = 150;
 
   setMotorSpeed(currSpeed);
   /*
@@ -165,29 +191,41 @@ void loop() {
    */
   servo2.write(80);
   delay(100);
-  for( pos=80; pos <= 160; pos++){
-    servo2.write(pos);
-    delay(10);
-    motor1.run(FORWARD);
-    motor2.run(FORWARD);
-    motor3.run(FORWARD);
-    motor4.run(FORWARD);
-    checkForObjects(pos);
-    
-  }
+  
   /*
-   * - Do the same as above but going to the left (always start from the middle.
+   * Make sure not to crash into objects in the front while the sweep is on the right or left
    */
-  servo2.write(80);
-  delay(100);
-  for( pos = 80; pos >= 10; pos--){
-    servo2.write(pos);
-    delay(10);
-    motor1.run(FORWARD);
-    motor2.run(FORWARD);
-    motor3.run(FORWARD);
-    motor4.run(FORWARD);
-    checkForObjects(pos);
-    
+  if(getFrontObject > 10){
+    for( pos=80; pos <= 160; pos++){
+      servo2.write(pos);
+      delay(10);
+      motor1.run(FORWARD);
+      motor2.run(FORWARD);
+      motor3.run(FORWARD);
+      motor4.run(FORWARD);
+      checkForObjects(pos);
+    }
+  
+    /*
+     * - Do the same as above but going to the left (always start from the middle.
+     */
+    servo2.write(80);
+    delay(100);
+    for( pos = 80; pos >= 10; pos--){
+      servo2.write(pos);
+      delay(10);
+      motor1.run(FORWARD);
+      motor2.run(FORWARD);
+      motor3.run(FORWARD);
+      motor4.run(FORWARD);
+      checkForObjects(pos);
+      
+    }
+  }
+  else{
+    motor1.run(BACKWARD);
+    motor2.run(BACKWARD);
+    motor3.run(BACKWARD);
+    motor4.run(BACKWARD);
   }
 }
