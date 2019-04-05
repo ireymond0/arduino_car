@@ -17,7 +17,7 @@ int pos = 40;
 long duration, duration2;
 int distance, distance2;
 int currSpeed;
-
+int maxSpeed = 255;
 /************************************************************************
  * Keep track of objects in the way
  ************************************************************************/
@@ -50,8 +50,8 @@ int getFrontObject(){
 
   //Calculating the distance in cm
   distance2 = duration2 / 29 / 2;
-
-  return distance;
+  Serial.println(distance2);
+  return distance2;
 }
 
 /************************************************************************
@@ -73,7 +73,6 @@ int getDistance(){
 
   //Calculating the distance in cm
   distance = duration / 29 / 2;
-
   return distance;
 }
 
@@ -142,14 +141,12 @@ void checkForObjects(int pos){
  *  make a hard turn to the left.
  ************************************************************************/
 void hardLeft(){
-    motor1.run(FORWARD);
-    motor1.setSpeed(currSpeed);
-    motor4.run(FORWARD);
-    motor4.setSpeed(currSpeed);
-    motor2.run(BACKWARD);
-//    motor2.setSpeed(currSpeed*2);
-    motor3.run(BACKWARD);
-//    motor3.setSpeed(currSpeed*2);
+  setMotorSpeed(maxSpeed);
+  motor1.run(FORWARD);
+  motor4.run(FORWARD);
+  motor2.run(BACKWARD);
+  motor3.run(BACKWARD);
+  setMotorSpeed(currSpeed);
 }
 
 /************************************************************************
@@ -157,14 +154,12 @@ void hardLeft(){
  *  make a hard turn to the right.
  ************************************************************************/
 void hardRight(){
-    motor1.run(BACKWARD);
-//    motor1.setSpeed(currSpeed*2);
-    motor4.run(BACKWARD);
-//    motor4.setSpeed(currSpeed*2);
-    motor2.run(FORWARD);
-    motor2.setSpeed(currSpeed);
-    motor3.run(FORWARD);
-    motor3.setSpeed(currSpeed);
+  setMotorSpeed(maxSpeed);
+  motor1.run(BACKWARD);
+  motor4.run(BACKWARD);
+  motor2.run(FORWARD);
+  motor3.run(FORWARD);
+  setMotorSpeed(currSpeed);
 }
 
 /************************************************************************
@@ -173,16 +168,18 @@ void hardRight(){
 void setup() {
   pinMode(trigPin,OUTPUT);
   pinMode(echoPin,INPUT);
+  pinMode(trigPin2,OUTPUT);
+  pinMode(echoPin,INPUT);
   Serial.begin(9600);
   servo2.attach(9);
-  setMotorSpeed(50);
+  setMotorSpeed(200);
 }
 
 /************************************************************************
  * Main Routine
  ************************************************************************/
 void loop() {
-  currSpeed = 150;
+  currSpeed = 200;
 
   setMotorSpeed(currSpeed);
   /*
@@ -191,41 +188,51 @@ void loop() {
    */
   servo2.write(80);
   delay(100);
-  
+  Serial.println(getFrontObject());
   /*
    * Make sure not to crash into objects in the front while the sweep is on the right or left
    */
-  if(getFrontObject > 10){
-    for( pos=80; pos <= 160; pos++){
-      servo2.write(pos);
-      delay(10);
-      motor1.run(FORWARD);
-      motor2.run(FORWARD);
-      motor3.run(FORWARD);
-      motor4.run(FORWARD);
-      checkForObjects(pos);
+  for( pos=80; pos <= 160; pos++){
+    while(getFrontObject() < 15){
+      Serial.println("Backwards");
+      motor1.run(BACKWARD);
+      motor2.run(BACKWARD);
+      motor3.run(BACKWARD);
+      motor4.run(BACKWARD);
     }
-  
-    /*
-     * - Do the same as above but going to the left (always start from the middle.
-     */
-    servo2.write(80);
-    delay(100);
-    for( pos = 80; pos >= 10; pos--){
-      servo2.write(pos);
-      delay(10);
-      motor1.run(FORWARD);
-      motor2.run(FORWARD);
-      motor3.run(FORWARD);
-      motor4.run(FORWARD);
-      checkForObjects(pos);
-      
-    }
+    servo2.write(pos);
+    delay(10);
+    motor1.run(FORWARD);
+    motor2.run(FORWARD);
+    motor3.run(FORWARD);
+    motor4.run(FORWARD);
+//    if(pos >90){
+//      checkForObjects(pos);
+//    }
   }
-  else{
-    motor1.run(BACKWARD);
-    motor2.run(BACKWARD);
-    motor3.run(BACKWARD);
-    motor4.run(BACKWARD);
+  
+  /*
+   * - Do the same as above but going to the left (always start from the middle.
+   */
+  servo2.write(80);
+  delay(100);
+  for( pos = 80; pos >= 10; pos--){
+    while(getFrontObject() < 15){
+      Serial.println("Backwards");
+      motor1.run(BACKWARD);
+      motor2.run(BACKWARD);
+      motor3.run(BACKWARD);
+      motor4.run(BACKWARD);
+    }
+    servo2.write(pos);
+    delay(10);
+    motor1.run(FORWARD);
+    motor2.run(FORWARD);
+    motor3.run(FORWARD);
+    motor4.run(FORWARD);
+//    if(pos < 60){
+//      checkForObjects(pos);
+//    }
+    
   }
 }
