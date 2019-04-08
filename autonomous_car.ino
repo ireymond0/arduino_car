@@ -193,22 +193,15 @@ void loop() {
    * Make sure not to crash into objects in the front while the sweep is on the right or left
    */
   for( pos=80; pos <= 160; pos++){
-    while(getFrontObject() < 15){
-      Serial.println("Backwards");
-      motor1.run(BACKWARD);
-      motor2.run(BACKWARD);
-      motor3.run(BACKWARD);
-      motor4.run(BACKWARD);
-    }
     servo2.write(pos);
     delay(10);
     motor1.run(FORWARD);
     motor2.run(FORWARD);
     motor3.run(FORWARD);
     motor4.run(FORWARD);
-//    if(pos >90){
-//      checkForObjects(pos);
-//    }
+    if(pos >90){
+      checkForObjects(pos);
+    }
   }
   
   /*
@@ -217,22 +210,15 @@ void loop() {
   servo2.write(80);
   delay(100);
   for( pos = 80; pos >= 10; pos--){
-    while(getFrontObject() < 15){
-      Serial.println("Backwards");
-      motor1.run(BACKWARD);
-      motor2.run(BACKWARD);
-      motor3.run(BACKWARD);
-      motor4.run(BACKWARD);
-    }
     servo2.write(pos);
     delay(10);
     motor1.run(FORWARD);
     motor2.run(FORWARD);
     motor3.run(FORWARD);
     motor4.run(FORWARD);
-//    if(pos < 60){
-//      checkForObjects(pos);
-//    }
+    if(pos < 60){
+      checkForObjects(pos);
+    }
     
   }
 }
