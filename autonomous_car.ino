@@ -17,7 +17,7 @@ int pos = 40;
 long duration, duration2;
 int distance, distance2;
 int currSpeed;
-int maxSpeed = 255;
+int maxSpeed = 175;
 /************************************************************************
  * Keep track of objects in the way
  ************************************************************************/

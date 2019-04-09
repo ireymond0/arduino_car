@@ -14,7 +14,7 @@ const int echoPin2 = 25;
 long duration, duration2;
 int distance, distance2;
 int currSpeed;
-int maxSpeed = 255;
+int maxSpeed = 175;
 boolean goesForward=false;
 int speedSet = 0;
 
@@ -128,18 +128,6 @@ int checkRight(){
   return ret;
 }
 
-int findGreatest(int one, int two){
-  if(one > two){
-    return 1;
-  }
-  else if (one < two){
-    return 2;
-  }
-  else{
-    return 3;
-  }
-}
-
 /************************************************************************
  * When objects are very close make some of the wheels go backwards to 
  *  make a hard turn to the left.
@@ -185,21 +173,33 @@ void setMotorSpeed(int sp){
 void frontObjectFound(){
   int distL = 0, distR = 0;
   distR = checkRight();
-//    Serial.println(rt);
+  Serial.println("check right");
   distL = checkLeft();
-//    Serial.println(lft);
-  if(distR >= distL){
-    for (int i = 0; i < 200;i++){
-      hardRight();
+  Serial.println("check left");
+  
+  if((distL < 25) && (distR < 25)){
+    while(getFrontObject() < 25){
+      runBack();
     }
+    frontObjectFound();
+    delay(500);
+  }else if(distR > distL){
+    Serial.println("test1");
+    hardRight();
     motorStop();
     delay(500);
-  }else{
-    for (int i = 0; i < 200;i++){
-      hardLeft();
-    }
+  }else if(distR < distL){
+    Serial.println("test2");
+    hardLeft();
     motorStop();
     delay(500); 
+  }
+  else{
+    while(getFrontObject() < 25){
+      runBack();
+    }
+    frontObjectFound();
+    delay(500);
   }
 }
 
@@ -218,31 +218,15 @@ void setup() {
 
 void loop() {
   int dist = getFrontObject();
-  Serial.println(dist);
+  servo2.write(80);
   delay(40);
-  if(dist > 20){
+  if(dist > 25){
     runFor();
     Serial.println("Forward ");
   }
   else{
     motorStop();
-    delay(100);
-    runBack();
-//    Serial.println("Backward ");
     delay(500);
     frontObjectFound();
-//    distR = checkRight();
-////    Serial.println(rt);
-//    distL = checkLeft();
-////    Serial.println(lft);
-//    if(distR >= distL){
-//      hardRight();
-//      motorStop();
-//      delay(500);
-//    }else{
-//      hardLeft();
-//      motorStop();
-//      delay(500); 
-//    }
   }
 }
