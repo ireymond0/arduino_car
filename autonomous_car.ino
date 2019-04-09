@@ -163,6 +163,16 @@ void hardRight(){
 }
 
 /************************************************************************
+ * Back up
+ ************************************************************************/
+void runBack(){
+  motor1.run(BACKWARD);
+  motor2.run(BACKWARD);
+  motor3.run(BACKWARD);
+  motor4.run(BACKWARD);
+}
+
+/************************************************************************
  * Setup Arduino
  ************************************************************************/
 void setup() {
@@ -179,7 +189,7 @@ void setup() {
  * Main Routine
  ************************************************************************/
 void loop() {
-  currSpeed = 200;
+  currSpeed = 175;
 
   setMotorSpeed(currSpeed);
   /*
@@ -189,6 +199,8 @@ void loop() {
   servo2.write(80);
   delay(100);
   Serial.println(getFrontObject());
+  int front = getFrontObject();
+
   /*
    * Make sure not to crash into objects in the front while the sweep is on the right or left
    */
