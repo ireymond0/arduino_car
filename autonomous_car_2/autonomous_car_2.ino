@@ -50,7 +50,7 @@ int getFrontObject(){
 
   //Calculating the distance in cm
   distance2 = duration2 / 29 / 2;
-  Serial.println(distance2);
+//  Serial.println(distance2);
   return distance2;
 }
 
@@ -110,7 +110,7 @@ void checkForObjects(int pos){
   
   obs.angle = pos;
   int objDist = getDistance();
- Serial.println(objDist);
+// Serial.println(objDist);
   while( (objDist < 70) && (objDist > 40)){
     objDist = getDistance();
     if( pos < 70 ){
@@ -141,12 +141,10 @@ void checkForObjects(int pos){
  *  make a hard turn to the left.
  ************************************************************************/
 void hardLeft(){
-  setMotorSpeed(maxSpeed);
   motor1.run(FORWARD);
   motor4.run(FORWARD);
   motor2.run(BACKWARD);
   motor3.run(BACKWARD);
-  setMotorSpeed(currSpeed);
 }
 
 /************************************************************************
@@ -154,12 +152,11 @@ void hardLeft(){
  *  make a hard turn to the right.
  ************************************************************************/
 void hardRight(){
-  setMotorSpeed(maxSpeed);
+//  Serial.println("Hard Right");
   motor1.run(BACKWARD);
   motor4.run(BACKWARD);
   motor2.run(FORWARD);
   motor3.run(FORWARD);
-  setMotorSpeed(currSpeed);
 }
 
 /************************************************************************
@@ -185,6 +182,59 @@ void setup() {
   setMotorSpeed(200);
 }
 
+int checkLeft(){
+  servo2.write(140);
+  int ret = getDistance();
+  delay(1000);
+  return ret;
+}
+int checkRight(){
+  servo2.write(20);
+  int ret = getDistance();
+  delay(1000);
+  return ret;
+}
+
+void frontObjectFound(){
+  int distL = 0, distR = 0;
+  distR = checkRight();
+//  Serial.println("check right");
+  distL = checkLeft();
+//  Serial.println("check left");
+  
+  if((distL < 25) && (distR < 25)){
+    while(getFrontObject() < 25){
+      runBack();
+    }
+    frontObjectFound();
+    delay(500);
+  }else if(distR > distL){
+//    Serial.println("test1");
+    hardRight();
+//    motorStop();
+    delay(500);
+  }else if(distR < distL){
+//    Serial.println("test2");
+    hardLeft();
+//    motorStop();
+    delay(500); 
+  }
+  else{
+    while(getFrontObject() < 25){
+      runBack();
+    }
+    frontObjectFound();
+    delay(500);
+  }
+}
+
+void motorStop(){
+  motor1.run(RELEASE);
+  motor2.run(RELEASE);
+  motor3.run(RELEASE);
+  motor4.run(RELEASE);
+}
+
 /************************************************************************
  * Main Routine
  ************************************************************************/
@@ -199,20 +249,26 @@ void loop() {
   servo2.write(80);
   delay(100);
   Serial.println(getFrontObject());
-  int front = getFrontObject();
-
   /*
    * Make sure not to crash into objects in the front while the sweep is on the right or left
    */
   for( pos=80; pos <= 160; pos++){
-    servo2.write(pos);
-    delay(10);
-    motor1.run(FORWARD);
-    motor2.run(FORWARD);
-    motor3.run(FORWARD);
-    motor4.run(FORWARD);
-    if(pos >90){
-      checkForObjects(pos);
+    int front = getFrontObject();
+    if(front >25){
+      servo2.write(pos);
+      delay(10);
+      motor1.run(FORWARD);
+      motor2.run(FORWARD);
+      motor3.run(FORWARD);
+      motor4.run(FORWARD);
+      if(pos >90){
+        checkForObjects(pos);
+      }
+    }
+    else{
+      motorStop();
+      delay(500);
+      frontObjectFound();
     }
   }
   
@@ -222,14 +278,22 @@ void loop() {
   servo2.write(80);
   delay(100);
   for( pos = 80; pos >= 10; pos--){
-    servo2.write(pos);
-    delay(10);
-    motor1.run(FORWARD);
-    motor2.run(FORWARD);
-    motor3.run(FORWARD);
-    motor4.run(FORWARD);
-    if(pos < 60){
-      checkForObjects(pos);
+    int front = getFrontObject();
+    if(front > 25){
+      servo2.write(pos);
+      delay(10);
+      motor1.run(FORWARD);
+      motor2.run(FORWARD);
+      motor3.run(FORWARD);
+      motor4.run(FORWARD);
+      if(pos < 60){
+        checkForObjects(pos);
+      }
+    }
+    else{
+      motorStop();
+      delay(500);
+      frontObjectFound();
     }
     
   }
