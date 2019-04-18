@@ -90,6 +90,9 @@ void checkForObstacles(){
   lightLEDs();
 }
 
+/************************************************************************
+ * LED control
+ ************************************************************************/
 void lightLEDs(){
   if(objectF){
     digitalWrite(ledPinF, HIGH);
