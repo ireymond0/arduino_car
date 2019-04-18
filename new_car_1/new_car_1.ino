@@ -16,11 +16,13 @@ const int echoPinL = 27;
 const int ledPinF = 28;
 const int ledPinR = 29;
 const int ledPinL = 30;
+const int ledPinRev = 31;
+const int ledPinFor = 32;
 
 // defines variables used to detect obstacles
 long durationF, durationR, durationL;
 int distanceF, distanceR, distanceL;
-bool objectF, objectR, ObjectL;
+bool objectF, objectR, objectL;
 
 // Current speed of the motors
 int currSpeed;
@@ -88,6 +90,8 @@ void checkForObstacles(){
   }
 
   lightLEDs();
+
+  
 }
 
 /************************************************************************
@@ -115,6 +119,16 @@ void lightLEDs(){
 }
 
 /************************************************************************
+ * Stop the motors
+ ************************************************************************/
+void motorStop(){
+  motor1.run(RELEASE);
+  motor2.run(RELEASE);
+  motor3.run(RELEASE);
+  motor4.run(RELEASE);
+}
+
+/************************************************************************
  * Setup Arduino
  ************************************************************************/
 void setup() {
@@ -128,10 +142,21 @@ void setup() {
   pinMode(ledPinR,OUTPUT);
   pinMode(ledPinL,OUTPUT);
   Serial.begin(9600);
+  motorStop();
   setMotorSpeed(150);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   checkForObstacles();
+  
+  /*
+  if(distanceF <= 10 && distanceR <= 10 && distanceL <= 10){
+    ledPinRev = high;
+  }
+  else{
+    ledPinRev = low;
+  }
+  if(
+  */
 }
